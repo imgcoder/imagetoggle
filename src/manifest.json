@@ -1,0 +1,36 @@
+{ "manifest_version": 2
+, "name": "Image Toggle"
+, "version": "0.5.0"
+, "description": "Switch images on and off including video"
+, "browser_action": 
+	{ "default_icon": "landscape-16.png"
+	, "default_popup": "menu.html"
+	}
+, "background": 
+	{ "scripts": ["background.js"]
+	, "persistent": true
+	}
+, "content_scripts" :
+	[
+		{ "matches": [ "http://*/*","https://*/*" ]
+		, "js": ["content.js"]
+		, "run_at": "document_start"
+		, "all_frames": true
+		}
+	]
+, "permissions" :
+	[ "storage", "contentSettings", "contextMenus", "activeTab" ]
+, "icons": 
+	{ "16": "landscape-16.png"
+	, "48": "landscape-48.png"
+	}
+, "commands": 
+	{ "toggle-feature-foo": 
+		{ "suggested_key":
+			{ "default": "Ctrl+Shift+Space"
+			,  "mac": "Command+Shift+Space"
+			}
+        , "description": "Switch images on/off"
+		}
+	}
+}

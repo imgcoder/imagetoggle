@@ -1,0 +1,22 @@
+div.menuitem:hover
+{
+	background-color: #44a;
+	color:#fff;
+}
+div.menuitem
+{
+	padding:0.3em;
+	font-size:100%;
+	white-space:nowrap;
+}
+span.menuitemselected
+{
+	display:inline-block;
+	min-width: 1em;
+}
+div.menuitem span.r
+{
+	margin-left: 0.3em;
+	padding-right: 0.3em;
+}
+
