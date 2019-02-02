@@ -12,3 +12,9 @@ The extension is available for Chome / Chromium, but it does not work in Firefox
 ## Technical implementation details
 Currently the display and blocking of images is implemented by adding a custom content preference for images. This works for Chrome, but Firefox and Edge do not implement this part of the WebExtensions API. An alternative would be to block/allow web requests. The problem is that a XMLHttpRequest could be a video stream, or it could be web page action.
 
+## How to enable logging
+To view logging, inspect the background page view from the Extensions page.
+To enable logging, execute the following code there:
+```javascript
+chrome.storage.local.set({'debugLog':true},function(){});
+```
