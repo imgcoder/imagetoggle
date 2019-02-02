@@ -1,6 +1,11 @@
 // This is a content script that has access to the DOM.
 
 var debugLog = false;
+var showBg = false;
+var hadResponse = false;
+var isDocLoaded = false;
+
+document.addEventListener('DOMContentLoaded', onDocLoaded);
 
 // Are images enabled or disabled?
 // We have to ask the more priviledged background page
@@ -21,48 +26,75 @@ chrome.runtime.sendMessage
 		}
 		
 		debugLog = response.debugLog;
-		
-		// a helper for showing clickable placeholders for background images,
-		// so the context menu can be used
-		if (response.showBg)
-		{
-			makeClickableBackgroundImages();
-		}
+		showBg = response.showBg;
 
 		switchImagesOff();
+		
+		hadResponse = true;
+		checkBothReady();
+
 	}
 );
 
+function checkBothReady()
+{
+	if (isDocLoaded && hadResponse)
+	{
+		// a helper for showing clickable placeholders for background images,
+		// so the context menu can be used
+		if (showBg)
+		{
+			makeClickableBackgroundImages();
+		}
+	}
+}
+
+function onDocLoaded()
+{
+	isDocLoaded = true;
+	checkBothReady();
+}
+
+
+
 function makeClickableBackgroundImages()
 {
-	lg('makeClickableBackgroundImages');
+	// verbose lg('makeClickableBackgroundImages');
 	var allelements = document.getElementsByTagName('*');
 	for (i = 0; i < allelements.length; i++) 
 	{
 		var elem = allelements[i];
-		var prop = window.getComputedStyle(elem, null).getPropertyValue("background-image");
-		if (prop!='none')
+		// give up if ...
+		if (elem.tagName=='HTML') continue;
+		if (elem.tagName=='BODY') continue;
+		// get background image if any
+		var compStyle = window.getComputedStyle(elem, null);
+		var compBgImg = compStyle.getPropertyValue("background-image");
+		if (compBgImg!='none')
 		{
+			lg("found ID=" + elem.id + " tag=" + elem.tagName + " with bg " + compBgImg);
+
 			// TODO: fix this
 			// remove url("
-			prop = prop.substring(5,prop.length);
+			compBgImg = compBgImg.substring(5,compBgImg.length);
 			// remove ")
-			prop = prop.substring(0,prop.length-2);
+			compBgImg = compBgImg.substring(0,compBgImg.length-2);
 			// alert (prop+ " is number " + numbernewelement);
 			var im = document.createElement("img");
 			// clickable but not the right position (at bottom)
-			document.body.appendChild(im);
-			/*
-			// Next lines don't work. Not clickable but the right position.
-			allelements[i].appendChild(im);
-			allelements[i].insertBefore(im,allelements[i].childNodes[0]);
-			im.style.offsetLeft = "inherit";
-			im.style.offsetTop = "inherit";
-			im.style.position = "absolute";
-			im.style.zIndex = 100;
-			*/
-			im.alt = "[III]";
-			im.src = prop;
+			//document.body.appendChild(im);
+			
+			lg('new src = ' + compBgImg);
+			
+			elem.parentNode.appendChild( im );
+			
+			im.style.position = compStyle.getPropertyValue('position');
+			im.style.left = compStyle.getPropertyValue('left');
+			im.style.top = compStyle.getPropertyValue('top');
+
+			im.alt = "[BG]";
+			im.src = compBgImg;
+			// idea: im.xPurpose = 'BgImageToggle';
 		}
 
 	}	
