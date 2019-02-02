@@ -1,21 +1,30 @@
 // This is a content script that has access to the DOM.
 
+var debugLog = false;
+
 // Are images enabled or disabled?
 // We have to ask the more priviledged background page
 
 chrome.runtime.sendMessage
-(	{ url: window.location.href }
+(	{ url: window.location.href 
+	, act: 'initUrl'
+	}
 ,	function(response)
 	{
 
-		if (response.img_on)
+		// imgOn is not the main setting
+		// but if images are on for the current page
+		
+		if (response.imgOn)
 		{
 			return;
 		}
 		
+		debugLog = response.debugLog;
+		
 		// a helper for showing clickable placeholders for background images,
 		// so the context menu can be used
-		if (response.showbg)
+		if (response.showBg)
 		{
 			makeClickableBackgroundImages();
 		}
@@ -26,6 +35,7 @@ chrome.runtime.sendMessage
 
 function makeClickableBackgroundImages()
 {
+	lg('makeClickableBackgroundImages');
 	var allelements = document.getElementsByTagName('*');
 	for (i = 0; i < allelements.length; i++) 
 	{
@@ -74,5 +84,17 @@ function switchImagesOff()
 	objStyle.appendChild(document.createTextNode(txtStyle));
 	document.documentElement.insertBefore(objStyle,document.documentElement.firstChild);
 
+}
+
+function lg(t)
+{
+	if (debugLog)
+	{
+		chrome.runtime.sendMessage
+		(	{ msg: t
+			, act: 'lg'
+			}
+		);
+	}
 }
 

@@ -1,10 +1,11 @@
 
-// if enabled, will log to the console of the background page
-var debugLog = false;
-
 var defaultSettings =
-	{ "main" : "neutral" // can be: allow, block, neutral
-	, "showbg" : false
+	// the main switch, can be: allow, block, neutral
+	{ "main" : "neutral"
+	// option "Show image" for background images
+	, "showBg" : false
+	// log to the console (of the background page)
+	, "debugLog" : false
 	};
 var settings = defaultSettings;
 
@@ -33,21 +34,29 @@ createContextMenu();
 chrome.runtime.onMessage.addListener
 (	function(request, sender, sendResponse) 
 	{
-		// lg("message from " + sender.tab.url);
-		chrome.contentSettings.images.get
-		(	{ primaryUrl: sender.tab.url }
-		,	function(details)
-			{
-				var isItOn = false;
-				if (details.setting=="allow") isItOn = true;
-				lg("images for " + sender.tab.url + ": " +  isItOn);
-				sendResponse(
-					{ img_on: isItOn
-					, showbg : settings.showbg
-					}
-				);
-			}
-		);
+		lg('Request act = ' + request.act);
+		if (request.act=='lg')
+		{
+			lg(request.msg);
+		}
+		if (request.act=='initUrl')
+		{
+			chrome.contentSettings.images.get
+			(	{ primaryUrl: sender.tab.url }
+			,	function(details)
+				{
+					var isItOn = false;
+					if (details.setting=="allow") isItOn = true;
+					lg("images for " + sender.tab.url + ": " +  isItOn);
+					sendResponse(
+						{ imgOn: isItOn
+						, showBg : settings.showBg
+						, debugLog : settings.debugLog
+						}
+					);
+				}
+			);
+		}
 		return true;
 	}
 );
@@ -179,7 +188,7 @@ function createContextMenu()
 
 // log to the console of the background page
 function lg(t){
-	if (debugLog)
+	if (settings.debugLog)
 	{
 		console.log(t);
 	}
