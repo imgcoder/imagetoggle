@@ -13,11 +13,12 @@ chrome.runtime.sendMessage
 			return;
 		}
 		
-		// TODO: next should be an option
 		// a helper for showing clickable placeholders for background images,
 		// so the context menu can be used
-		// by default do not:
-		// makeClickableBackgroundImages();
+		if (response.showbg)
+		{
+			makeClickableBackgroundImages();
+		}
 
 		switchImagesOff();
 	}

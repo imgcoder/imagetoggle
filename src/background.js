@@ -2,20 +2,22 @@
 // if enabled, will log to the console of the background page
 var debugLog = false;
 
-// mainSetting can be: allow, block, neutral
-// by default (initial install), we take user settings
-var mainSetting = "neutral";
+var defaultSettings =
+	{ "main" : "neutral" // can be: allow, block, neutral
+	, "showbg" : false
+	};
+var settings = defaultSettings;
 
 // for debugging without setting
 // this line: chrome.storage.local.remove('main');
 
 // get current setting, and apply it
-chrome.storage.local.get(['main'],function(result){
-	// initially it will be undefined
-	if (typeof(result.main)!='undefined'
-	&& result.main!='')
+chrome.storage.local.get(settings,function(result){
+	settings = result;
+	lg("Initial settings loaded:");
+	for (key in settings)
 	{
-		mainSetting = result.main;
+		lg(key + " = " + settings[key] );
 	}
 	applyMainSetting();
 });
@@ -39,7 +41,11 @@ chrome.runtime.onMessage.addListener
 				var isItOn = false;
 				if (details.setting=="allow") isItOn = true;
 				lg("images for " + sender.tab.url + ": " +  isItOn);
-				sendResponse({img_on:isItOn});
+				sendResponse(
+					{ img_on: isItOn
+					, showbg : settings.showbg
+					}
+				);
 			}
 		);
 		return true;
@@ -49,18 +55,27 @@ chrome.runtime.onMessage.addListener
 // detect if settings are changed
 // this happens when user selects in menu
 chrome.storage.onChanged.addListener(function(changes, namespace) {
-	lg("Setting changed to " + changes.main.newValue);
-	mainSetting = changes.main.newValue;
+	for (key in changes)
+	{
+		if (typeof(changes[key].newValue)=='undefined')
+		{
+			settings[key] = defaultSettings[key];
+		} else
+		{
+			settings[key] = changes[key].newValue;
+			lg("Setting " + key + " changed to " + changes[key].newValue);
+		}
+	}
 	applyMainSetting();
 });
 
 // Images on and Image off by a shortcut.
 chrome.commands.onCommand.addListener(function(command) {
 	lg('Command:' + command);
-	if (mainSetting=="allow" || mainSetting=="neutral"){
+	if (settings.main=="allow" || settings.main=="neutral"){
 		switchOff();
 	} else
-	if (mainSetting=="block"){
+	if (settings.main=="block"){
 		switchOn();
 	}
 });
@@ -125,21 +140,21 @@ function switchNeutral()
 
 function applyMainSetting()
 {
-	lg("Apply " + mainSetting );
+	lg("Apply " + settings.main );
 	var ct = chrome.contentSettings.images;
 	ct.clear({});
-	if (mainSetting!='block'
-	&& mainSetting!='allow')
+	if (settings.main!='block'
+	&& settings.main!='allow')
 	{
 		return;
 	}
 	ct.set(
 		{	primaryPattern : 'http://*/*'
-		,	setting : mainSetting
+		,	setting : settings.main
 		} );
 	ct.set(
 		{	primaryPattern : 'https://*/*'
-		,	setting : mainSetting
+		,	setting : settings.main
 		} );
 }
 
