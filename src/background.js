@@ -34,7 +34,7 @@ createContextMenu();
 chrome.runtime.onMessage.addListener
 (	function(request, sender, sendResponse) 
 	{
-		lg('Request act = ' + request.act);
+		// verbose lg('Request act = ' + request.act);
 		if (request.act=='lg')
 		{
 			lg(request.msg);
@@ -95,7 +95,7 @@ chrome.contextMenus.onClicked.addListener(
 		
 		var imageSrcUrl = info.srcUrl;
 		var tabUrl = tab.url;
-		lg("Show an image on " + tabUrl);
+		lg("Show image " + imageSrcUrl + " on " + tabUrl);
 
 		// it is the tab domain that counts,
 		// not the image domain (for whatever reason)

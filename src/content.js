@@ -70,7 +70,7 @@ function makeClickableBackgroundImages()
 		var compBgImg = compStyle.getPropertyValue("background-image");
 		if (compBgImg!='none')
 		{
-			lg("found ID=" + elem.id + " tag=" + elem.tagName + " with bg " + compBgImg);
+			lg("found " + elem.tagName + " with bg " + compBgImg);
 
 			// TODO: fix this
 			// remove url("
