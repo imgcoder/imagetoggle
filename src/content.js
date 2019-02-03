@@ -55,8 +55,6 @@ function onDocLoaded()
 	checkBothReady();
 }
 
-
-
 function makeClickableBackgroundImages()
 {
 	// verbose lg('makeClickableBackgroundImages');
@@ -94,7 +92,9 @@ function makeClickableBackgroundImages()
 
 			im.alt = "[BG]";
 			im.src = compBgImg;
-			// idea: im.xPurpose = 'BgImageToggle';
+			// mark with special attribute
+			// so we can find (and delete) it later
+			im.setAttribute('xpurpose','BgImageToggle');
 		}
 
 	}	

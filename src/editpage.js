@@ -39,7 +39,32 @@ function backgroundImages(){
 	}
 }
 
+function deletePlaceholders(imageSrcUrl)
+{
+	var images = document.getElementsByTagName("img");
+	var toRemove = [];
+	for (i = 0; i < images.length; i++) {
+		var img = images[i];
+		if (img.getAttribute('xpurpose')=='BgImageToggle')
+		{
+			if (img.getAttribute('src')==imageSrcUrl)
+			{
+				toRemove.push(img);
+			}
+		}
+	}
+	for (ix in toRemove)
+	{
+		var node = toRemove[ix];
+		if (node.parentNode)
+		{
+			node.parentNode.removeChild( node );
+		}
+	}
+}
+
 // perform it
+deletePlaceholders(imageSrcUrl);
 normalImages();
 backgroundImages();
 
