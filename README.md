@@ -14,7 +14,7 @@ After right-clicking on the placeholder item and choosing Show image,
 it will attempt to load the background image.
 
 ## Loading the Image Toggle extension
-- On the extensions page, enabled Developer mode
+- On the extensions page, enable Developer mode
 - Click "Load unpacked"
 - Select the "src" directory
 
