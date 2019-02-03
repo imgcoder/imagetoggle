@@ -57,7 +57,9 @@ function onDocLoaded()
 
 function makeClickableBackgroundImages()
 {
-	// verbose lg('makeClickableBackgroundImages');
+	var insertList = [];
+	// verbose 
+	lg('makeClickableBackgroundImages');
 	var allelements = document.getElementsByTagName('*');
 	for (i = 0; i < allelements.length; i++) 
 	{
@@ -72,32 +74,40 @@ function makeClickableBackgroundImages()
 		{
 			lg("found " + elem.tagName + " with bg " + compBgImg);
 
-			// TODO: fix this
-			// remove url("
-			compBgImg = compBgImg.substring(5,compBgImg.length);
-			// remove ")
-			compBgImg = compBgImg.substring(0,compBgImg.length-2);
-			// alert (prop+ " is number " + numbernewelement);
+			if (compBgImg.slice(0,5) != 'url("') continue;
+			if (compBgImg.slice(-2) != '")') continue;
+			var imSrc = compBgImg.slice(5,-2);
+			lg('new src = ' + imSrc);
+			
 			var im = document.createElement("img");
-			// clickable but not the right position (at bottom)
-			//document.body.appendChild(im);
-			
-			lg('new src = ' + compBgImg);
-			
-			elem.parentNode.appendChild( im );
 			
 			im.style.position = compStyle.getPropertyValue('position');
 			im.style.left = compStyle.getPropertyValue('left');
 			im.style.top = compStyle.getPropertyValue('top');
 
 			im.alt = "[BG]";
-			im.src = compBgImg;
+			im.src = imSrc;
 			// mark with special attribute
 			// so we can find (and delete) it later
 			im.setAttribute('xpurpose','BgImageToggle');
+			
+			var toInsert = {};
+			toInsert.elem = elem;
+			toInsert.im = im;
+			insertList.push(toInsert);
 		}
-
-	}	
+	}
+	
+	for (ix in insertList)
+	{
+		var toInsert = insertList[ix];
+		if (toInsert.elem.parentNode==null) continue;
+		lg( 'insert , parent is a ' + toInsert.elem.parentNode.tagName);
+		// elem is the node with background image
+		// im is the image placeholder
+		// we insert im after elem
+		toInsert.elem.parentNode.insertBefore(toInsert.im,toInsert.elem.nextSibling);
+	}
 }
 
 // apply extra CSS rules to really switch off images

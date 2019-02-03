@@ -117,7 +117,9 @@ chrome.contextMenus.onClicked.addListener(
 		chrome.tabs.executeScript(null, {file: "editpage.js"},function(){
 			// This is executed whem editpage is finished.
 			// Restore old settings
-			applyMainSetting();
+			// add a little delay (in ms)
+			// because sometimes needed to load image
+			setTimeout(applyMainSetting,1000);
 		});	
 
 	}
