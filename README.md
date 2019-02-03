@@ -4,6 +4,15 @@ Image Toggle is a browser extension to control the display of images. If images 
 ## Web browser status
 The extension is available for Chome / Chromium, but it does not work in Firefox or Edge.
 
+## Background images
+By default, the right-click "Show image" option
+is not available for background images,
+but it can be enabled in the settings of Image Toggle.
+If enabled, placeholder items are added to the web page
+with \[BG\] as (alt) text.
+After right-clicking on the placeholder item and choosing Show image,
+it will attempt to load the background image.
+
 ## Loading the Image Toggle extension
 - On the extensions page, enabled Developer mode
 - Click "Load unpacked"
